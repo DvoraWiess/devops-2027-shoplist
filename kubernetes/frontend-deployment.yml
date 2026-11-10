@@ -1,11 +1,26 @@
-# frontend-deployment.yml - your turn (step 9c). Blank page
-# Hint: copy stats-deployment.yml here and delete what you don't need
-#
-# Checklist:
-#   [ ] four levels: apiVersion, kind, metadata, spec
-#   [ ] app: frontend in two places, identical
-#   [ ] image: shoplist-frontend:local and imagePullPolicy: Never
-#   [ ] containerPort: 80
-#   [ ] no env, no Secret, no readinessProbe
+# frontend-deployment.yml - your turn (step 9c)
+# Same pattern as stats-deployment.yml, but shorter:
+# no env, no Secret, no readinessProbe
 #
 # Before apply: kubectl apply --dry-run=server -f kubernetes/frontend-deployment.yml
+apiVersion: apps/v1             # which API group holds Deployment? (same as backend/stats)
+kind: Deployment                        # which resource keeps pods running?
+metadata:
+  name: frontend
+  namespace: shoplist                 # the namespace of the whole project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend                   # the frontend label
+  template:
+    metadata:
+      labels:
+        app: frontend                 # exactly the same label as above
+    spec:
+      containers:
+        - name: frontend
+          image: shoplist-frontend:local             # the image we built in step 1, including the tag
+          imagePullPolicy: Never   # do not download: the image is already on this computer
+          ports:
+            - containerPort: 80 # nginx port (look at nginx.conf: listen)
